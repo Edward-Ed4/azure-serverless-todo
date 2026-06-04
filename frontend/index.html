@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudTasks - Azure To-Do App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+      </div>
+      <h1>CloudTasks</h1>
+      <p class="subtitle">Azure Serverless To-Do App</p>
+    </header>
+
+    <main>
+      <form id="todo-form" class="add-form" novalidate>
+        <label for="todo-input" class="visually-hidden">New task</label>
+        <input
+          type="text"
+          id="todo-input"
+          class="todo-input"
+          placeholder="What do you need to do?"
+          maxlength="200"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="btn btn-primary" id="add-btn">
+          <span class="btn-text">Add Task</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <div id="error-banner" class="error-banner" role="alert" aria-live="polite" hidden>
+        <span id="error-message"></span>
+        <button class="error-close" aria-label="Dismiss error" onclick="dismissError()">✕</button>
+      </div>
+
+      <section aria-label="Task list">
+        <div id="loading" class="loading-state" aria-live="polite">
+          <div class="spinner" role="status">
+            <span class="visually-hidden">Loading tasks…</span>
+          </div>
+        </div>
+
+        <ul id="todo-list" class="todo-list" aria-label="Your tasks" hidden></ul>
+
+        <div id="empty-state" class="empty-state" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="30" fill="#f0f6ff" stroke="#c7dff7" stroke-width="2"/>
+            <path d="M20 32h24M32 20v24" stroke="#0078d4" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <p>No tasks yet. Add one above!</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Powered by <strong>Azure Static Web Apps</strong> · <strong>Azure Functions</strong> · <strong>Cosmos DB</strong></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
