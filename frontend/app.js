@@ -3,8 +3,8 @@
  * Frontend application logic
  */
 
-// Replace this with your actual API Gateway URL after deployment
-const API_BASE_URL = window.API_BASE_URL || "";
+const API_BASE_URL =
+  "https://zvzesiqv22.execute-api.eu-north-1.amazonaws.com/Prod";
 
 // ── DOM references ──────────────────────────────────────────────────────────
 const todoForm = document.getElementById("todo-form");
