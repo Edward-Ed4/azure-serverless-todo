@@ -1,9 +1,10 @@
 /**
- * CloudTasks – Azure Serverless To-Do App
+ * CloudTasks – AWS Serverless To-Do App
  * Frontend application logic
  */
 
-const API_BASE_URL = "/api";
+// Replace this with your actual API Gateway URL after deployment
+const API_BASE_URL = window.API_BASE_URL || "";
 
 // ── DOM references ──────────────────────────────────────────────────────────
 const todoForm = document.getElementById("todo-form");
@@ -108,7 +109,7 @@ async function loadTodos() {
   setListLoading(true);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/GetTodos`, {
+    const response = await fetch(`${API_BASE_URL}/todos`, {
       method: "GET",
       headers: { Accept: "application/json" },
     });
@@ -152,7 +153,7 @@ async function addTodo() {
   setAddLoading(true);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/CreateTodo`, {
+    const response = await fetch(`${API_BASE_URL}/todos`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -197,7 +198,7 @@ async function deleteTodo(id, listItem) {
 
   try {
     const response = await fetch(
-      `${API_BASE_URL}/DeleteTodo?id=${encodeURIComponent(id)}`,
+      `${API_BASE_URL}/todos?id=${encodeURIComponent(id)}`,
       {
         method: "DELETE",
         headers: { Accept: "application/json" },

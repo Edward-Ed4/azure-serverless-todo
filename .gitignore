@@ -1,9 +1,9 @@
-# Local Azure Functions settings (contains secrets)
-api/local.settings.json
-
 # Node modules
 node_modules/
 api/node_modules/
+
+# AWS SAM build output
+.aws-sam/
 
 # OS files
 .DS_Store
@@ -12,7 +12,5 @@ Thumbs.db
 # VS Code
 .vscode/
 
-# Azure Functions build output
-api/dist/
-api/bin/
-api/obj/
+# Environment / secrets
+.env

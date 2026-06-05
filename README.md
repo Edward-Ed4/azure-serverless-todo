@@ -1,164 +1,115 @@
-# CloudTasks – Azure Serverless To-Do Application
+# CloudTasks – AWS Serverless To-Do Application
 
-A fully serverless task management app built on Azure. Add, view, and delete tasks through a clean web interface backed by Azure Functions and Cosmos DB, with zero servers to manage.
+A lightweight to-do app built on fully serverless AWS infrastructure with MongoDB Atlas as the database backend.
 
 ---
 
 ## Architecture
 
-| Service                       | Role                                                                              |
-| ----------------------------- | --------------------------------------------------------------------------------- |
-| **Azure Static Web Apps**     | Hosts the frontend (HTML/CSS/JS) and acts as a reverse proxy to the Functions API |
-| **Azure Functions (Node.js)** | Serverless HTTP API — three functions handle CRUD operations for tasks            |
-| **Azure Cosmos DB (NoSQL)**   | Globally distributed, schema-free database that stores task documents             |
+| Layer                | Service                | Role                                        |
+| -------------------- | ---------------------- | ------------------------------------------- |
+| Frontend hosting     | **AWS S3**             | Serves the static HTML/CSS/JS files         |
+| Serverless functions | **AWS Lambda**         | Handles GET, POST, and DELETE todo logic    |
+| REST API             | **Amazon API Gateway** | Routes HTTP requests to Lambda functions    |
+| Database             | **MongoDB Atlas**      | Cloud-hosted NoSQL store for todo documents |
+
+The three Lambda functions (`getTodos`, `createTodo`, `deleteTodo`) share a single `api/` directory and are deployed together via AWS SAM. Each function maintains a cached MongoDB client across warm invocations to minimise connection overhead.
 
 ---
 
 ## Prerequisites
 
-- [Azure account](https://azure.microsoft.com/free/) (free tier is sufficient)
-- [Node.js 18+](https://nodejs.org/)
-- [Azure Functions Core Tools v4](https://learn.microsoft.com/azure/azure-functions/functions-run-local)
-- [Visual Studio Code](https://code.visualstudio.com/) with the [Azure Static Web Apps extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestaticwebapps) (recommended)
+- [AWS account](https://aws.amazon.com/free/) with IAM permissions to deploy Lambda, API Gateway, and S3
+- [Node.js 22+](https://nodejs.org/)
+- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+- [MongoDB Atlas account](https://www.mongodb.com/cloud/atlas) (free tier works fine)
 
 ---
 
-## Setup & Deployment
+## Setup
 
-### 1. Clone or download the project
+### 1. Create a MongoDB Atlas free cluster
 
-```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd azure-todo-app
+Sign in to [MongoDB Atlas](https://cloud.mongodb.com), create a free M0 cluster, and allow network access from `0.0.0.0/0` (or restrict to your Lambda NAT Gateway IPs for production).
+
+### 2. Create the database and collection
+
+In Atlas, create a database named `TodoDB` with a collection named `todos`.
+
+### 3. Get your MongoDB connection string
+
+From the Atlas cluster overview, click **Connect → Drivers** and copy the connection string. It looks like:
+
+```
+mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
 ```
 
-### 2. Create a Cosmos DB account (free tier)
+Store this as the `MONGODB_URI` GitHub secret (or pass it directly when running SAM locally).
 
-1. Sign in to the [Azure Portal](https://portal.azure.com).
-2. Search for **Azure Cosmos DB** and click **Create**.
-3. Select **Azure Cosmos DB for NoSQL**.
-4. Fill in:
-   - **Resource Group**: create new or use existing
-   - **Account Name**: any globally unique name (e.g. `cloudtasks-db`)
-   - **Capacity mode**: Serverless (or select the free tier offer)
-5. Click **Review + Create** → **Create** and wait for deployment.
+### 4. Deploy the API with SAM
 
-### 3. Create the database and container
+```bash
+# Install API dependencies
+cd api && npm install && cd ..
 
-1. Open your new Cosmos DB account and click **Data Explorer**.
-2. Click **New Container**.
-3. Set:
-   - **Database id**: `TodoDB` (select _Create new_)
-   - **Container id**: `todos`
-   - **Partition key**: `/id`
-4. Click **OK**.
+# Build and deploy (guided first run)
+sam build
+sam deploy --guided
+```
 
-### 4. Copy the connection string to local settings
+When prompted, provide your MongoDB connection string as the `MongoDBUri` parameter. SAM will output the `ApiUrl` when the deployment completes.
 
-1. In the Cosmos DB account, go to **Settings → Keys**.
-2. Copy the **PRIMARY CONNECTION STRING**.
-3. Open `api/local.settings.json` and replace `YOUR_COSMOS_CONNECTION_STRING` with the copied value.
+### 5. Create an S3 bucket for the frontend
 
-> **Note:** `local.settings.json` is excluded from source control by `.gitignore` to keep secrets out of your repository.
+```bash
+aws s3 mb s3://your-bucket-name --region us-east-1
+aws s3 website s3://your-bucket-name --index-document index.html
+```
 
-### 5. Deploy to Azure Static Web Apps via GitHub
+Set the bucket policy to allow public read access, then enable static website hosting in the AWS Console.
 
-1. Push this project to a GitHub repository.
-2. In the Azure Portal, create a new **Static Web App**:
-   - **Source**: GitHub → select your repo and the `main` branch
-   - **Build preset**: Custom
-   - **App location**: `frontend`
-   - **Api location**: `api`
-   - **Output location**: _(leave blank)_
-3. Azure will commit a GitHub Actions workflow file to your repo automatically (or use the one already in `.github/workflows/`).
-4. The first deployment will run within a few minutes.
+### 6. Set the API URL in the frontend
 
-### 6. Add the Cosmos DB connection string to Azure
+Open `frontend/app.js` and update the `API_BASE_URL` line:
 
-1. In the Azure Portal, open your Static Web App.
-2. Go to **Settings → Environment variables**.
-3. Add the following variables:
+```javascript
+const API_BASE_URL =
+  window.API_BASE_URL ||
+  "https://YOUR_API_ID.execute-api.us-east-1.amazonaws.com/Prod";
+```
 
-| Name                       | Value                                    |
-| -------------------------- | ---------------------------------------- |
-| `COSMOS_CONNECTION_STRING` | Your Cosmos DB primary connection string |
-| `COSMOS_DATABASE`          | `TodoDB`                                 |
-| `COSMOS_CONTAINER`         | `todos`                                  |
+### 7. Upload frontend files to S3
 
-4. Save and trigger a new deployment (or push a commit) for the settings to take effect.
+```bash
+aws s3 sync frontend/ s3://your-bucket-name --delete
+```
+
+Your app is now live at `http://your-bucket-name.s3-website-us-east-1.amazonaws.com`.
 
 ---
 
-## Local Development
+## CI/CD with GitHub Actions
 
-### Install API dependencies
+The workflow at `.github/workflows/deploy.yml` automatically deploys on every push to `main`.
 
-```bash
-cd api
-npm install
-```
+Add these secrets to your GitHub repository (**Settings → Secrets and variables → Actions**):
 
-### Start the API locally
-
-```bash
-# Inside the api/ directory
-func start
-```
-
-The Functions runtime will start on `http://localhost:7071`. The three endpoints will be available at:
-
-- `GET  http://localhost:7071/api/GetTodos`
-- `POST http://localhost:7071/api/CreateTodo`
-- `DELETE http://localhost:7071/api/DeleteTodo?id=<id>`
-
-### Serve the frontend locally
-
-Open `frontend/index.html` directly in a browser, **or** use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) for a full local emulation (including the `/api` proxy):
-
-```bash
-npm install -g @azure/static-web-apps-cli
-swa start frontend --api-location api
-```
-
-This starts the emulator on `http://localhost:4280`, proxying `/api/*` requests to the local Functions runtime.
-
----
-
-## Project Structure
-
-```
-azure-todo-app/
-├── frontend/                  # Static web app (no build step required)
-│   ├── index.html             # App shell
-│   ├── style.css              # Styles (CSS variables, responsive)
-│   └── app.js                 # Vanilla JS — API calls & DOM rendering
-├── api/                       # Azure Functions app
-│   ├── host.json              # Functions host configuration
-│   ├── local.settings.json    # Local env vars (not committed)
-│   ├── package.json           # Node.js dependencies
-│   ├── GetTodos/              # GET /api/GetTodos
-│   │   ├── function.json
-│   │   └── index.js
-│   ├── CreateTodo/            # POST /api/CreateTodo
-│   │   ├── function.json
-│   │   └── index.js
-│   └── DeleteTodo/            # DELETE /api/DeleteTodo?id=<id>
-│       ├── function.json
-│       └── index.js
-├── .github/
-│   └── workflows/
-│       └── azure-static-web-apps.yml   # CI/CD pipeline
-├── staticwebapp.config.json   # Routing & security headers
-└── README.md
-```
+| Secret                  | Description                            |
+| ----------------------- | -------------------------------------- |
+| `AWS_ACCESS_KEY_ID`     | IAM access key with deploy permissions |
+| `AWS_SECRET_ACCESS_KEY` | Corresponding IAM secret key           |
+| `MONGODB_URI`           | MongoDB Atlas connection string        |
+| `S3_BUCKET_NAME`        | S3 bucket name for frontend            |
 
 ---
 
 ## API Reference
 
-### GET /api/GetTodos
+Base URL: `https://{api-id}.execute-api.{region}.amazonaws.com/Prod`
 
-Returns all tasks ordered by creation time (newest first).
+### GET /todos
+
+Returns all todos sorted by creation date descending.
 
 **Response 200**
 
@@ -173,11 +124,9 @@ Returns all tasks ordered by creation time (newest first).
 ]
 ```
 
----
+### POST /todos
 
-### POST /api/CreateTodo
-
-Creates a new task.
+Creates a new todo item.
 
 **Request body**
 
@@ -185,21 +134,46 @@ Creates a new task.
 { "title": "Buy groceries" }
 ```
 
-**Response 201** – the created document  
-**Response 400** – missing or empty `title`
+**Response 201**
+
+```json
+{
+  "id": "uuid",
+  "title": "Buy groceries",
+  "completed": false,
+  "createdAt": "2024-01-15T10:30:00.000Z"
+}
+```
+
+**Response 400** — missing or empty `title`
+
+### DELETE /todos?id={id}
+
+Deletes a todo by its `id`.
+
+**Response 204** — deleted successfully  
+**Response 404** — todo not found  
+**Response 400** — `id` query parameter missing
 
 ---
 
-### DELETE /api/DeleteTodo?id={id}
+## Project Structure
 
-Deletes the task with the given id.
-
-**Response 204** – deleted successfully  
-**Response 400** – missing `id` parameter  
-**Response 404** – task not found
-
----
-
-## License
-
-MIT
+```
+azure-todo-app/
+├── frontend/
+│   ├── index.html          # App shell and markup
+│   ├── style.css           # Styles
+│   └── app.js              # Fetch calls to API Gateway
+├── api/
+│   ├── package.json        # mongodb driver dependency
+│   ├── getTodos.js         # Lambda: GET /todos
+│   ├── createTodo.js       # Lambda: POST /todos
+│   └── deleteTodo.js       # Lambda: DELETE /todos
+├── template.yaml           # AWS SAM infrastructure template
+├── .github/
+│   └── workflows/
+│       └── deploy.yml      # GitHub Actions CI/CD
+├── .gitignore
+└── README.md
+```

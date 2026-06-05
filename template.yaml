@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: CloudTasks - Serverless To-Do App on AWS
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Timeout: 10
+    MemorySize: 256
+    Environment:
+      Variables:
+        MONGODB_URI: !Ref MongoDBUri
+        MONGODB_DATABASE: TodoDB
+
+Parameters:
+  MongoDBUri:
+    Type: String
+    Description: MongoDB Atlas connection string
+    NoEcho: true
+
+Resources:
+  GetTodosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: cloudtasks-get-todos
+      CodeUri: api/
+      Handler: getTodos.handler
+      Events:
+        GetTodos:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: get
+        GetTodosOptions:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: options
+
+  CreateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: cloudtasks-create-todo
+      CodeUri: api/
+      Handler: createTodo.handler
+      Events:
+        CreateTodo:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: post
+        CreateTodoOptions:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: options
+
+  DeleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: cloudtasks-delete-todo
+      CodeUri: api/
+      Handler: deleteTodo.handler
+      Events:
+        DeleteTodo:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: delete
+        DeleteTodoOptions:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: options
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
