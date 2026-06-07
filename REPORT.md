@@ -13,7 +13,7 @@
 
 Cloud computing has transformed how software applications are built, deployed, and scaled. Instead of managing physical servers, developers can now leverage cloud platforms to host applications that are globally available, highly scalable, and cost-effective. This project demonstrates the practical application of cloud computing concepts by building and deploying a fully functional serverless web application called **CloudTasks** using Amazon Web Services (AWS).
 
-CloudTasks is a To-Do List web application that allows users to create, view, and delete tasks through a browser-based interface. The application is built entirely on cloud services with no traditional servers required.
+CloudTasks is a full-featured task management web application that allows users to create, view, filter, and manage tasks through a professional browser-based dashboard. Tasks support categories, priority levels, due dates, and completion tracking. The application is built entirely on cloud services with no traditional servers required.
 
 ---
 
@@ -22,9 +22,10 @@ CloudTasks is a To-Do List web application that allows users to create, view, an
 - Design and deploy a cloud-native web application using AWS services
 - Demonstrate the use of serverless computing through AWS Lambda
 - Implement a REST API using Amazon API Gateway
-- Host a static frontend on AWS S3 with public web access
+- Host a static frontend on AWS S3 with global delivery via Amazon CloudFront
 - Integrate a cloud-hosted NoSQL database (MongoDB Atlas) for persistent data storage
 - Apply cloud computing concepts including scalability, elasticity, and pay-as-you-go pricing
+- Build a feature-rich task management interface with categories, priorities, due dates, and filtering
 
 ---
 
@@ -81,11 +82,12 @@ Amazon S3 is an object storage service that offers scalability, data availabilit
 
 AWS Lambda is a serverless compute service that runs code without provisioning or managing servers. Lambda automatically scales based on the number of requests. Three Lambda functions were created:
 
-| Function                 | HTTP Method | Purpose                               |
-| ------------------------ | ----------- | ------------------------------------- |
-| `cloudtasks-get-todos`   | GET         | Retrieves all tasks from the database |
-| `cloudtasks-create-todo` | POST        | Creates a new task in the database    |
-| `cloudtasks-delete-todo` | DELETE      | Deletes a task from the database      |
+| Function                   | HTTP Method | Purpose                                                     |
+| -------------------------- | ----------- | ----------------------------------------------------------- |
+| `cloudtasks-get-todos`     | GET         | Retrieves all tasks from the database                       |
+| `cloudtasks-create-todo`   | POST        | Creates a new task with title, category, priority, due date |
+| `cloudtasks-delete-todo`   | DELETE      | Deletes a task from the database by ID                      |
+| `cloudtasks-complete-todo` | PATCH       | Updates the completed status of a task                      |
 
 Each function is written in Node.js 22.x and connects to MongoDB Atlas using the official MongoDB driver. The functions are triggered by HTTP events from API Gateway.
 
@@ -102,11 +104,12 @@ Amazon API Gateway is a fully managed service for creating, publishing, and main
 
 **API Endpoints:**
 
-| Method | Endpoint            | Function               |
-| ------ | ------------------- | ---------------------- |
-| GET    | /Prod/todos         | cloudtasks-get-todos   |
-| POST   | /Prod/todos         | cloudtasks-create-todo |
-| DELETE | /Prod/todos?id={id} | cloudtasks-delete-todo |
+| Method | Endpoint                                    | Function                 |
+| ------ | ------------------------------------------- | ------------------------ |
+| GET    | /Prod/todos                                 | cloudtasks-get-todos     |
+| POST   | /Prod/todos                                 | cloudtasks-create-todo   |
+| DELETE | /Prod/todos?id={id}                         | cloudtasks-delete-todo   |
+| PATCH  | /Prod/todos/complete?id={id}&completed=true | cloudtasks-complete-todo |
 
 **Base URL:** `https://zvzesiqv22.execute-api.eu-north-1.amazonaws.com/Prod`
 
@@ -145,11 +148,16 @@ Each task document stored in MongoDB has the following structure:
 
 The CloudTasks application provides the following functionality:
 
-- **View Tasks:** On page load, all existing tasks are fetched from the database and displayed
-- **Add Task:** Users can type a task title and click "Add Task" to save it to the cloud database
-- **Delete Task:** Each task has a delete button (✕) to remove it from the database
-- **Real-time feedback:** Loading states, error messages, and empty state indicators
-- **Responsive design:** Works on desktop and mobile browsers
+- **Dashboard Statistics:** Four live stat cards showing Total Tasks, Completed, Pending, and High Priority counts — updated in real time
+- **Add Task:** Form with Title, Category (Work/School/Personal/Other), Priority (High/Medium/Low), and Due Date fields
+- **View Tasks:** All tasks displayed with color-coded category and priority badges
+- **Mark Complete:** Checkbox on each task toggles completion — completed tasks show strikethrough styling
+- **Delete Task:** Delete button (✕) removes tasks from the cloud database instantly
+- **Filter Tasks:** Tab buttons (All/Active/Completed) and dropdowns to filter by Priority and Category
+- **Overdue Detection:** Tasks past their due date are highlighted in red automatically
+- **Responsive Design:** Works correctly on desktop and mobile browsers
+- **Sidebar Navigation:** Professional sidebar with student name, registration number, and navigation links
+- **Student Identification:** Name and registration number displayed in sidebar and footer
 
 ---
 
