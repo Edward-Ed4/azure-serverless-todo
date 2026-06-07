@@ -22,6 +22,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: CORS_HEADERS, body: "" };
   }
+
   try {
     let body;
     try {
@@ -50,6 +51,9 @@ exports.handler = async (event) => {
     const newTodo = {
       id: crypto.randomUUID(),
       title,
+      category: body.category || "Other",
+      priority: body.priority || "Medium",
+      dueDate: body.dueDate || null,
       completed: false,
       createdAt: new Date().toISOString(),
     };

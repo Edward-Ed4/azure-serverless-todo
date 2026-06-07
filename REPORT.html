@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: "Calibri", sans-serif;
+        font-size: 12pt;
+        line-height: 1.6;
+        margin: 2.5cm 2.5cm 2.5cm 3cm;
+        color: #000;
+      }
+      .cover {
+        text-align: center;
+        padding-top: 80px;
+        page-break-after: always;
+      }
+      .cover h1 {
+        font-size: 22pt;
+        font-weight: bold;
+        color: #1a3c6e;
+        margin-bottom: 10px;
+      }
+      .cover h2 {
+        font-size: 16pt;
+        font-weight: normal;
+        color: #333;
+        margin-bottom: 40px;
+      }
+      .cover table {
+        margin: 0 auto;
+        border-collapse: collapse;
+        width: 70%;
+      }
+      .cover table td {
+        padding: 6px 12px;
+        font-size: 12pt;
+        border-bottom: 1px solid #ccc;
+      }
+      .cover table td:first-child {
+        font-weight: bold;
+        color: #1a3c6e;
+        width: 45%;
+      }
+      .cover .logo-text {
+        font-size: 48pt;
+        color: #1a3c6e;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 18pt;
+        color: #1a3c6e;
+        border-bottom: 2px solid #1a3c6e;
+        padding-bottom: 4px;
+        margin-top: 30px;
+      }
+      h2 {
+        font-size: 14pt;
+        color: #1a3c6e;
+        margin-top: 24px;
+      }
+      h3 {
+        font-size: 12pt;
+        color: #1a3c6e;
+        margin-top: 18px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 16px 0;
+      }
+      table th {
+        background-color: #1a3c6e;
+        color: white;
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 11pt;
+      }
+      table td {
+        border: 1px solid #ccc;
+        padding: 7px 12px;
+        font-size: 11pt;
+      }
+      table tr:nth-child(even) {
+        background-color: #f2f6fc;
+      }
+      pre,
+      code {
+        background-color: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-family: "Courier New", monospace;
+        font-size: 10pt;
+      }
+      pre {
+        padding: 12px;
+        display: block;
+        overflow-x: auto;
+      }
+      .url {
+        color: #0563c1;
+        text-decoration: underline;
+      }
+      .footer-note {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 12px;
+        border-top: 1px solid #ccc;
+        font-size: 10pt;
+        color: #555;
+      }
+      ul {
+        margin: 8px 0 8px 20px;
+      }
+      li {
+        margin-bottom: 4px;
+      }
+      .highlight {
+        background-color: #e8f0fe;
+        padding: 10px 14px;
+        border-left: 4px solid #1a3c6e;
+        margin: 14px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- COVER PAGE -->
+    <div class="cover">
+      <div class="logo-text">☁</div>
+      <h1>CloudTasks</h1>
+      <h2>A Serverless To-Do Web Application on AWS</h2>
+      <h2 style="font-size: 13pt; margin-bottom: 50px">
+        Cloud Computing Project Report
+      </h2>
+      <table>
+        <tr>
+          <td>Student Name</td>
+          <td>Ebaju Edward</td>
+        </tr>
+        <tr>
+          <td>Registration Number</td>
+          <td>24/U/23929/PS</td>
+        </tr>
+        <tr>
+          <td>Student Number</td>
+          <td>2400723929</td>
+        </tr>
+        <tr>
+          <td>Course</td>
+          <td>Cloud Computing</td>
+        </tr>
+        <tr>
+          <td>Year</td>
+          <td>2026</td>
+        </tr>
+        <tr>
+          <td>GitHub Repository</td>
+          <td>github.com/Edward-Ed4/azure-serverless-todo</td>
+        </tr>
+        <tr>
+          <td>Live Application</td>
+          <td>d18dq5screwix.cloudfront.net</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- REPORT BODY -->
+
+    <h1>1. Introduction</h1>
+    <p>
+      Cloud computing has transformed how software applications are built,
+      deployed, and scaled. Instead of managing physical servers, developers can
+      now leverage cloud platforms to host applications that are globally
+      available, highly scalable, and cost-effective. This project demonstrates
+      the practical application of cloud computing concepts by building and
+      deploying a fully functional serverless web application called
+      <strong>CloudTasks</strong> using Amazon Web Services (AWS).
+    </p>
+    <p>
+      CloudTasks is a To-Do List web application that allows users to create,
+      view, and delete tasks through a browser-based interface. The application
+      is built entirely on cloud services with no traditional servers required.
+    </p>
+
+    <h1>2. Project Objectives</h1>
+    <ul>
+      <li>
+        Design and deploy a cloud-native web application using AWS services
+      </li>
+      <li>Demonstrate the use of serverless computing through AWS Lambda</li>
+      <li>Implement a REST API using Amazon API Gateway</li>
+      <li>
+        Host a static frontend on AWS S3 with global delivery via Amazon
+        CloudFront
+      </li>
+      <li>
+        Integrate a cloud-hosted NoSQL database (MongoDB Atlas) for persistent
+        data storage
+      </li>
+      <li>
+        Apply cloud computing concepts including scalability, elasticity, and
+        pay-as-you-go pricing
+      </li>
+    </ul>
+
+    <h1>3. Cloud Architecture</h1>
+    <p>The application follows a three-tier serverless architecture:</p>
+
+    <div class="highlight">
+      <pre>
+[User Browser]
+      |  HTTPS
+      v
+[Amazon CloudFront - CDN]
+      |
+      v
+[AWS S3 - Static Website Hosting]
+      |  REST API calls
+      v
+[Amazon API Gateway]
+      |  Lambda Proxy Integration
+      v
+[AWS Lambda Functions (Node.js 22.x)]
+      |  MongoDB Driver
+      v
+[MongoDB Atlas - Cloud NoSQL Database]
+</pre
+      >
+    </div>
+
+    <h2>3.1 Architecture Summary</h2>
+    <table>
+      <tr>
+        <th>Layer</th>
+        <th>Service</th>
+        <th>Role</th>
+      </tr>
+      <tr>
+        <td>Delivery</td>
+        <td>Amazon CloudFront</td>
+        <td>Global HTTPS CDN delivering content from nearest edge location</td>
+      </tr>
+      <tr>
+        <td>Presentation</td>
+        <td>AWS S3 Static Website</td>
+        <td>Hosts HTML, CSS, and JavaScript files</td>
+      </tr>
+      <tr>
+        <td>API Layer</td>
+        <td>Amazon API Gateway</td>
+        <td>Exposes HTTP endpoints and routes requests to Lambda</td>
+      </tr>
+      <tr>
+        <td>Business Logic</td>
+        <td>AWS Lambda (Node.js 22.x)</td>
+        <td>Serverless functions handling CRUD operations</td>
+      </tr>
+      <tr>
+        <td>Data Layer</td>
+        <td>MongoDB Atlas (Free Tier)</td>
+        <td>Cloud-hosted NoSQL database storing task documents</td>
+      </tr>
+    </table>
+
+    <h1>4. Services Used</h1>
+
+    <h2>4.1 Amazon S3 (Simple Storage Service)</h2>
+    <p>
+      Amazon S3 is an object storage service that offers scalability, data
+      availability, and security. In this project, S3 is used to host the static
+      frontend files (HTML, CSS, JavaScript) with static website hosting
+      enabled. The bucket <code>cloudtasks-frontend-2026</code> is configured
+      with public read access.
+    </p>
+    <p><strong>Key features used:</strong></p>
+    <ul>
+      <li>Static website hosting</li>
+      <li>Public bucket policy for read access</li>
+      <li>Object storage for web assets (HTML, CSS, JavaScript)</li>
+    </ul>
+
+    <h2>4.2 Amazon CloudFront</h2>
+    <p>
+      Amazon CloudFront is a fast content delivery network (CDN) service that
+      securely delivers data with low latency and high transfer speeds.
+      CloudFront was added to provide HTTPS access and global availability.
+      Without CloudFront, the S3 website URL only supports HTTP and may be
+      inaccessible in some regions.
+    </p>
+    <p>
+      <strong>Distribution domain:</strong>
+      <span class="url">https://d18dq5screwix.cloudfront.net</span>
+    </p>
+    <ul>
+      <li>HTTPS delivery with TLS encryption</li>
+      <li>Global edge locations for fast access worldwide</li>
+      <li>Origin: S3 static website endpoint</li>
+    </ul>
+
+    <h2>4.3 AWS Lambda</h2>
+    <p>
+      AWS Lambda is a serverless compute service that runs code without
+      provisioning or managing servers. Lambda automatically scales based on the
+      number of requests. Three Lambda functions were created:
+    </p>
+    <table>
+      <tr>
+        <th>Function Name</th>
+        <th>HTTP Method</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td>cloudtasks-get-todos</td>
+        <td>GET</td>
+        <td>Retrieves all tasks from the database ordered by date</td>
+      </tr>
+      <tr>
+        <td>cloudtasks-create-todo</td>
+        <td>POST</td>
+        <td>Creates a new task and saves it to the database</td>
+      </tr>
+      <tr>
+        <td>cloudtasks-delete-todo</td>
+        <td>DELETE</td>
+        <td>Deletes a specific task from the database by ID</td>
+      </tr>
+    </table>
+    <p>
+      Each function is written in <strong>Node.js 22.x</strong> and uses the
+      MongoDB driver to connect to Atlas. Environment variables store the
+      database credentials securely.
+    </p>
+    <p><strong>Key features used:</strong></p>
+    <ul>
+      <li>Serverless execution — no server management required</li>
+      <li>Node.js 22.x runtime</li>
+      <li>Environment variables for secure configuration</li>
+      <li>Pay-per-invocation pricing — costs nothing when idle</li>
+      <li>Automatic scaling to handle any number of requests</li>
+    </ul>
+
+    <h2>4.4 Amazon API Gateway</h2>
+    <p>
+      Amazon API Gateway is a fully managed service for creating, publishing,
+      and maintaining REST APIs. It acts as the entry point for all HTTP
+      requests, routing them to the appropriate Lambda function.
+    </p>
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>Endpoint</th>
+        <th>Lambda Function</th>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>/Prod/todos</td>
+        <td>cloudtasks-get-todos</td>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>/Prod/todos</td>
+        <td>cloudtasks-create-todo</td>
+      </tr>
+      <tr>
+        <td>DELETE</td>
+        <td>/Prod/todos?id={id}</td>
+        <td>cloudtasks-delete-todo</td>
+      </tr>
+    </table>
+    <p>
+      <strong>API Base URL:</strong>
+      <code>https://zvzesiqv22.execute-api.eu-north-1.amazonaws.com/Prod</code>
+    </p>
+    <p><strong>Key features used:</strong></p>
+    <ul>
+      <li>REST API with Lambda proxy integration</li>
+      <li>CORS configuration for browser access</li>
+      <li>Regional endpoint in eu-north-1 (Stockholm)</li>
+      <li>Prod deployment stage</li>
+    </ul>
+
+    <h2>4.5 MongoDB Atlas</h2>
+    <p>
+      MongoDB Atlas is a fully managed cloud database service. A free tier M0
+      cluster was created in Frankfurt (eu-central-1). MongoDB Atlas stores each
+      task as a document in a NoSQL collection.
+    </p>
+    <p><strong>Database configuration:</strong></p>
+    <ul>
+      <li>Cluster name: <code>cloudtasks-cluster</code></li>
+      <li>Database: <code>TodoDB</code></li>
+      <li>Collection: <code>todos</code></li>
+      <li>
+        Network access: open to all IPs (0.0.0.0/0) for Lambda connectivity
+      </li>
+    </ul>
+    <p><strong>Document structure:</strong></p>
+    <pre>
+{
+  "id": "uuid-string",
+  "title": "Task title text",
+  "completed": false,
+  "createdAt": "2026-06-05T08:00:00.000Z"
+}</pre
+    >
+
+    <h1>5. Application Features</h1>
+    <ul>
+      <li>
+        <strong>View Tasks:</strong> On page load, all existing tasks are
+        fetched from the cloud database and displayed
+      </li>
+      <li>
+        <strong>Add Task:</strong> Users type a task title and click "Add Task"
+        to save it to MongoDB Atlas
+      </li>
+      <li>
+        <strong>Delete Task:</strong> Each task has a delete button (✕) to
+        remove it from the database
+      </li>
+      <li>
+        <strong>Real-time feedback:</strong> Loading spinners, error messages,
+        and empty state indicators
+      </li>
+      <li>
+        <strong>Responsive design:</strong> Works correctly on both desktop and
+        mobile browsers
+      </li>
+      <li>
+        <strong>Student identification:</strong> Footer displays student name,
+        registration number, and student number
+      </li>
+    </ul>
+
+    <h1>6. Implementation</h1>
+
+    <h2>6.1 Frontend</h2>
+    <p>
+      The frontend is a single-page application built with plain HTML5, CSS3,
+      and vanilla JavaScript. No frontend framework was used, keeping the
+      application lightweight and fast. The JavaScript uses the browser's Fetch
+      API to communicate with the API Gateway endpoints.
+    </p>
+
+    <h2>6.2 Backend (Lambda Functions)</h2>
+    <p>Each Lambda function follows this pattern:</p>
+    <ol>
+      <li>Parse the incoming HTTP request from API Gateway</li>
+      <li>Connect to MongoDB Atlas using a cached client connection</li>
+      <li>
+        Perform the required database operation (query, insert, or delete)
+      </li>
+      <li>Return a properly formatted HTTP response with CORS headers</li>
+    </ol>
+    <p>
+      Connection caching reuses the MongoDB client across warm Lambda
+      invocations to reduce connection overhead and improve response times.
+    </p>
+
+    <h2>6.3 Security</h2>
+    <ul>
+      <li>
+        MongoDB credentials are stored as Lambda environment variables, not in
+        source code
+      </li>
+      <li>CORS headers are configured on both Lambda and API Gateway</li>
+      <li>S3 bucket policy allows only public read access to objects</li>
+      <li>CloudFront enforces HTTPS for all connections</li>
+      <li>MongoDB Atlas IP access list controls which sources can connect</li>
+    </ul>
+
+    <h2>6.4 Source Code</h2>
+    <p>
+      The full source code is publicly available on GitHub:<br />
+      <span class="url"
+        >https://github.com/Edward-Ed4/azure-serverless-todo</span
+      >
+    </p>
+
+    <h1>7. Deployment Process</h1>
+    <ol>
+      <li>Created an AWS account with the Free tier (6 months, $200 credit)</li>
+      <li>
+        Created an S3 bucket (<code>cloudtasks-frontend-2026</code>) with static
+        website hosting enabled
+      </li>
+      <li>Created three AWS Lambda functions with Node.js 22.x runtime</li>
+      <li>
+        Uploaded function code as ZIP files containing the handler and MongoDB
+        driver
+      </li>
+      <li>
+        Configured environment variables (<code>MONGODB_URI</code>,
+        <code>MONGODB_DATABASE</code>) on each Lambda function
+      </li>
+      <li>
+        Created an Amazon API Gateway REST API (<code>cloudtasks-api</code>)
+        with a <code>/todos</code> resource
+      </li>
+      <li>
+        Added GET, POST, and DELETE methods with Lambda proxy integration
+        enabled
+      </li>
+      <li>Enabled CORS on the API Gateway for browser access</li>
+      <li>Deployed the API to a "Prod" stage</li>
+      <li>
+        Created a MongoDB Atlas free M0 cluster and configured network access
+      </li>
+      <li>
+        Created database <code>TodoDB</code> and collection <code>todos</code>
+      </li>
+      <li>
+        Uploaded frontend files to S3 and applied public read bucket policy
+      </li>
+      <li>Created a CloudFront distribution for global HTTPS delivery</li>
+      <li>Pushed all source code to GitHub repository</li>
+    </ol>
+
+    <h1>8. Cloud Computing Concepts Demonstrated</h1>
+    <table>
+      <tr>
+        <th>Concept</th>
+        <th>How it is Demonstrated</th>
+      </tr>
+      <tr>
+        <td>Serverless Computing</td>
+        <td>
+          AWS Lambda runs code without any server provisioning or management
+        </td>
+      </tr>
+      <tr>
+        <td>Scalability</td>
+        <td>
+          Lambda and API Gateway automatically scale to handle any number of
+          requests
+        </td>
+      </tr>
+      <tr>
+        <td>Elasticity</td>
+        <td>
+          Resources scale up during high traffic and down to zero when idle
+        </td>
+      </tr>
+      <tr>
+        <td>Pay-as-you-go</td>
+        <td>
+          Lambda charges only for actual function invocations — free when not in
+          use
+        </td>
+      </tr>
+      <tr>
+        <td>Managed Services</td>
+        <td>
+          No operating system, patching, or infrastructure management required
+        </td>
+      </tr>
+      <tr>
+        <td>Cloud Storage</td>
+        <td>S3 stores and serves static web files globally</td>
+      </tr>
+      <tr>
+        <td>Content Delivery Network</td>
+        <td>CloudFront distributes content from edge locations worldwide</td>
+      </tr>
+      <tr>
+        <td>Cloud Database</td>
+        <td>MongoDB Atlas provides a managed NoSQL database in the cloud</td>
+      </tr>
+      <tr>
+        <td>REST API</td>
+        <td>API Gateway exposes a standard HTTP REST interface</td>
+      </tr>
+      <tr>
+        <td>High Availability</td>
+        <td>AWS services are distributed across multiple availability zones</td>
+      </tr>
+      <tr>
+        <td>Infrastructure as Code</td>
+        <td>AWS SAM template (template.yaml) defines all infrastructure</td>
+      </tr>
+      <tr>
+        <td>CI/CD Pipeline</td>
+        <td>GitHub Actions workflow automates deployment on code push</td>
+      </tr>
+    </table>
+
+    <h1>9. Challenges Encountered</h1>
+
+    <h2>9.1 Azure Region Restrictions</h2>
+    <p>
+      The project initially targeted Microsoft Azure using an Azure for Students
+      subscription. However, the subscription had severe region restrictions
+      that prevented deployment of Azure Static Web Apps, Azure Functions, and
+      Azure Cosmos DB in any of the available regions. After exhausting all
+      available region options, the project was migrated to AWS, which provided
+      better region availability and fewer restrictions.
+    </p>
+
+    <h2>9.2 Lambda Handler Configuration</h2>
+    <p>
+      Initially the Lambda handler was set to the default
+      <code>index.handler</code> instead of the function-specific handlers
+      (<code>getTodos.handler</code>, <code>createTodo.handler</code>,
+      <code>deleteTodo.handler</code>). This caused a
+      <code>Runtime.ImportModuleError</code> that was identified through
+      CloudWatch logs and resolved by updating the runtime settings for each
+      function.
+    </p>
+
+    <h2>9.3 API Gateway CORS Configuration</h2>
+    <p>
+      Cross-Origin Resource Sharing (CORS) needed to be explicitly configured on
+      the API Gateway to allow browser requests from the S3-hosted frontend.
+      Without proper CORS headers, browsers blocked all API responses.
+    </p>
+
+    <h2>9.4 Lambda Proxy Integration</h2>
+    <p>
+      The API Gateway required Lambda proxy integration to be enabled for each
+      HTTP method to correctly pass requests to Lambda and return responses to
+      the client. Without this setting, API Gateway returned raw Lambda output
+      instead of proper HTTP responses.
+    </p>
+
+    <h2>9.5 CloudFront Origin Configuration</h2>
+    <p>
+      The CloudFront distribution initially pointed to the S3 bucket endpoint
+      instead of the S3 website endpoint. This was corrected by updating the
+      origin to use the website endpoint, enabling proper routing of requests to
+      <code>index.html</code>.
+    </p>
+
+    <h1>10. Live Application</h1>
+    <div class="highlight">
+      <p>
+        <strong>Frontend URL (CloudFront - HTTPS):</strong>
+        <span class="url">https://d18dq5screwix.cloudfront.net</span>
+      </p>
+      <p>
+        <strong>S3 URL (direct):</strong>
+        <span class="url"
+          >http://cloudtasks-frontend-2026.s3-website.eu-north-1.amazonaws.com</span
+        >
+      </p>
+      <p>
+        <strong>API Base URL:</strong>
+        <span class="url"
+          >https://zvzesiqv22.execute-api.eu-north-1.amazonaws.com/Prod</span
+        >
+      </p>
+      <p>
+        <strong>GitHub Repository:</strong>
+        <span class="url"
+          >https://github.com/Edward-Ed4/azure-serverless-todo</span
+        >
+      </p>
+    </div>
+
+    <h1>11. Conclusion</h1>
+    <p>
+      This project successfully demonstrates the design and deployment of a
+      cloud-native serverless web application using Amazon Web Services. The
+      CloudTasks application leverages five AWS and cloud services: AWS Lambda
+      for serverless compute, Amazon API Gateway for REST API management, AWS S3
+      for static website hosting, Amazon CloudFront for global HTTPS content
+      delivery, and MongoDB Atlas for cloud database storage.
+    </p>
+    <p>
+      The project illustrates key cloud computing concepts including serverless
+      architecture, managed services, auto-scaling, elasticity, and the
+      pay-as-you-go pricing model. The application is fully functional, publicly
+      accessible from anywhere in the world, and requires zero server management
+      — demonstrating the power and simplicity of modern cloud platforms.
+    </p>
+    <p>
+      Despite challenges encountered during deployment — particularly with Azure
+      region restrictions — the project was successfully completed by adapting
+      to use AWS services, demonstrating the importance of flexibility and
+      problem-solving in cloud engineering.
+    </p>
+
+    <h1>12. References</h1>
+    <ul>
+      <li>
+        Amazon Web Services Documentation:
+        <span class="url">https://docs.aws.amazon.com</span>
+      </li>
+      <li>
+        AWS Lambda Developer Guide:
+        <span class="url">https://docs.aws.amazon.com/lambda/latest/dg/</span>
+      </li>
+      <li>
+        Amazon API Gateway Documentation:
+        <span class="url">https://docs.aws.amazon.com/apigateway/</span>
+      </li>
+      <li>
+        Amazon S3 Documentation:
+        <span class="url">https://docs.aws.amazon.com/s3/</span>
+      </li>
+      <li>
+        Amazon CloudFront Documentation:
+        <span class="url">https://docs.aws.amazon.com/cloudfront/</span>
+      </li>
+      <li>
+        MongoDB Atlas Documentation:
+        <span class="url">https://www.mongodb.com/docs/atlas/</span>
+      </li>
+      <li>
+        Node.js Documentation: <span class="url">https://nodejs.org/docs/</span>
+      </li>
+      <li>
+        GitHub Repository:
+        <span class="url"
+          >https://github.com/Edward-Ed4/azure-serverless-todo</span
+        >
+      </li>
+    </ul>
+
+    <div class="footer-note">
+      <p>
+        <strong>Ebaju Edward</strong> &nbsp;|&nbsp; Reg No: 24/U/23929/PS
+        &nbsp;|&nbsp; Student No: 2400723929 &nbsp;|&nbsp; Cloud Computing
+        Project 2026
+      </p>
+    </div>
+  </body>
+</html>

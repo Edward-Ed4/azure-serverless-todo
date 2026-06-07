@@ -73,6 +73,24 @@ Resources:
             Path: /todos
             Method: options
 
+  CompleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: cloudtasks-complete-todo
+      CodeUri: api/
+      Handler: completeTodo.handler
+      Events:
+        CompleteTodo:
+          Type: Api
+          Properties:
+            Path: /todos/complete
+            Method: patch
+        CompleteTodoOptions:
+          Type: Api
+          Properties:
+            Path: /todos/complete
+            Method: options
+
 Outputs:
   ApiUrl:
     Description: API Gateway endpoint URL

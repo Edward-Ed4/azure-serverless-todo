@@ -3,13 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CloudTasks - AWS To-Do App</title>
+    <title>CloudTasks – AWS Serverless To-Do</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <header>
-        <div class="logo">
+    <!-- ── Sidebar ─────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"
+            />
+          </svg>
+        </div>
+        <span class="brand-name">CloudTasks</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar">EE</div>
+        <div class="user-info">
+          <span class="user-name">Ebaju Edward</span>
+          <span class="user-reg">24/U/23929/PS</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Dashboard navigation">
+        <a href="#" class="nav-item active">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+            />
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+            />
+          </svg>
+          My Tasks
+        </a>
+        <a href="#" class="nav-item">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -18,29 +69,106 @@
           >
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
           </svg>
+          Completed
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>AWS Lambda · MongoDB Atlas</p>
+        <p>Cloud Computing 2026</p>
+      </div>
+    </aside>
+
+    <!-- ── Main content ────────────────────────────────────────────── -->
+    <div class="main-wrapper">
+      <!-- Top header bar -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1>Task Dashboard</h1>
+          <p class="header-sub">Manage your tasks efficiently</p>
         </div>
-        <h1>CloudTasks</h1>
-        <p class="subtitle">AWS Serverless To-Do App</p>
+        <div class="header-right">
+          <span class="header-date" id="header-date"></span>
+        </div>
       </header>
 
-      <main>
-        <form id="todo-form" class="add-form" novalidate>
-          <label for="todo-input" class="visually-hidden">New task</label>
-          <input
-            type="text"
-            id="todo-input"
-            class="todo-input"
-            placeholder="What do you need to do?"
-            maxlength="200"
-            autocomplete="off"
-            required
-          />
-          <button type="submit" class="btn btn-primary" id="add-btn">
-            <span class="btn-text">Add Task</span>
-            <span class="btn-spinner" aria-hidden="true"></span>
-          </button>
-        </form>
+      <main class="main-content">
+        <!-- Stats row -->
+        <section class="stats-row" aria-label="Task statistics">
+          <div class="stat-card stat-total">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+                />
+              </svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-value" id="stat-total">0</span>
+              <span class="stat-label">Total Tasks</span>
+            </div>
+          </div>
 
+          <div class="stat-card stat-completed">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-value" id="stat-completed">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-pending">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                />
+              </svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-value" id="stat-pending">0</span>
+              <span class="stat-label">Pending</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-high">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+              </svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-value" id="stat-high">0</span>
+              <span class="stat-label">High Priority</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Error banner -->
         <div
           id="error-banner"
           class="error-banner"
@@ -58,11 +186,146 @@
           </button>
         </div>
 
+        <!-- Add Task form -->
+        <section class="form-card" aria-labelledby="form-heading">
+          <h2 id="form-heading" class="form-heading">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              width="20"
+              height="20"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+              />
+            </svg>
+            Add New Task
+          </h2>
+          <form id="todo-form" novalidate>
+            <div class="form-grid">
+              <div class="form-group form-group--title">
+                <label for="todo-input"
+                  >Task Title <span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  id="todo-input"
+                  class="form-control"
+                  placeholder="What do you need to do?"
+                  maxlength="200"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="todo-category">Category</label>
+                <select id="todo-category" class="form-control">
+                  <option value="Work">Work</option>
+                  <option value="School" selected>School</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="todo-priority">Priority</label>
+                <select id="todo-priority" class="form-control">
+                  <option value="High">High</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="todo-due">Due Date</label>
+                <input type="date" id="todo-due" class="form-control" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="add-btn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  width="16"
+                  height="16"
+                >
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+                  />
+                </svg>
+                <span class="btn-text">Add Task</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="filter-tabs" role="tablist" aria-label="Task filter">
+            <button
+              class="filter-tab active"
+              data-filter="all"
+              role="tab"
+              aria-selected="true"
+            >
+              All
+            </button>
+            <button
+              class="filter-tab"
+              data-filter="active"
+              role="tab"
+              aria-selected="false"
+            >
+              Active
+            </button>
+            <button
+              class="filter-tab"
+              data-filter="completed"
+              role="tab"
+              aria-selected="false"
+            >
+              Completed
+            </button>
+          </div>
+          <div class="filter-selects">
+            <select
+              id="filter-priority"
+              class="filter-select"
+              aria-label="Filter by priority"
+            >
+              <option value="all">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+            <select
+              id="filter-category"
+              class="filter-select"
+              aria-label="Filter by category"
+            >
+              <option value="all">All Categories</option>
+              <option value="Work">Work</option>
+              <option value="School">School</option>
+              <option value="Personal">Personal</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Task list -->
         <section aria-label="Task list">
           <div id="loading" class="loading-state" aria-live="polite">
             <div class="spinner" role="status">
               <span class="visually-hidden">Loading tasks…</span>
             </div>
+            <p class="loading-text">Loading your tasks…</p>
           </div>
 
           <ul
@@ -75,43 +338,46 @@
           <div id="empty-state" class="empty-state" hidden>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 64 64"
+              viewBox="0 0 80 80"
               aria-hidden="true"
             >
               <circle
-                cx="32"
-                cy="32"
-                r="30"
-                fill="#f0f6ff"
+                cx="40"
+                cy="40"
+                r="38"
+                fill="#e8f4fd"
                 stroke="#c7dff7"
                 stroke-width="2"
               />
               <path
-                d="M20 32h24M32 20v24"
+                d="M24 40h32M40 24v32"
                 stroke="#0078d4"
                 stroke-width="3"
                 stroke-linecap="round"
               />
             </svg>
-            <p>No tasks yet. Add one above!</p>
+            <p class="empty-title">No tasks found</p>
+            <p class="empty-sub">Add a new task above to get started</p>
           </div>
         </section>
       </main>
 
-      <footer>
+      <!-- Footer -->
+      <footer class="main-footer">
         <p>
-          Powered by <strong>AWS S3</strong> · <strong>AWS Lambda</strong> ·
-          <strong>MongoDB Atlas</strong>
+          Powered by <strong>AWS Lambda</strong> &nbsp;·&nbsp;
+          <strong>API Gateway</strong> &nbsp;·&nbsp;
+          <strong>MongoDB Atlas</strong> &nbsp;·&nbsp;
+          <strong>CloudFront</strong>
         </p>
-        <p style="margin-top: 0.5rem">
+        <p>
           <strong>Ebaju Edward</strong> &nbsp;|&nbsp; Reg No: 24/U/23929/PS
-          &nbsp;|&nbsp; Student No: 2400723929
-        </p>
-        <p style="margin-top: 0.25rem; font-size: 0.75rem">
-          Cloud Computing Project &mdash; 2026
+          &nbsp;|&nbsp; Student No: 2400723929 &nbsp;|&nbsp; Cloud Computing
+          Project — 2026
         </p>
       </footer>
     </div>
+    <!-- /.main-wrapper -->
 
     <script src="app.js"></script>
   </body>
